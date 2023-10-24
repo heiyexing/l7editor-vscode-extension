@@ -12,25 +12,24 @@ module.exports = {
   module: {
     rules: [
       {
-        test:/\.(js|jsx)$/, 
+        test: /\.(js|jsx|tsx)$/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              '@babel/preset-react',
-              '@babel/preset-typescript'
-            ]
-          }
-        }
+            presets: ['@babel/preset-react', '@babel/preset-typescript'],
+          },
+        },
       },
       {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      }
-    ]
+        test: /.css$/,
+        //注意webpack的使用的顺序是按照从右像左的所以先使用css去识别css文件，然后在把css提取出来放到，头部的style里面
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
+      },
+    ],
   },
   resolve: {
     extensions: ['.js', '.tsx', '.ts'],

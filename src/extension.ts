@@ -1,26 +1,70 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import path from "path";
+import * as vscode from "vscode";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "l7editor-vscode-extension" is now active!');
+  let a = vscode.commands.registerCommand("a", () => {
+    const panel = vscode.window.createWebviewPanel(
+      "React",
+      "React App",
+      vscode.ViewColumn.One,
+      {
+        retainContextWhenHidden: true, // 保证 Webview 所在页面进入后台时不被释放
+        enableScripts: true, // 运行 JS 执行
+      }
+    );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('l7editor-vscode-extension.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from l7editor-vscode-extension!');
-	});
+    const isProduction =
+      context.extensionMode === vscode.ExtensionMode.Production;
+    let srcUrl = "";
+    if (isProduction) {
+      const filePath = vscode.Uri.file(
+        path.join(context.extensionPath, "dist", "static/js/main.js")
+      );
+      srcUrl = panel.webview.asWebviewUri(filePath).toString();
+    } else {
+      srcUrl = "http://localhost:3000/static/js/main.js";
+    }
+    panel.webview.html = getWebviewContent(srcUrl);
 
-	context.subscriptions.push(disposable);
+    const updateWebview = () => {
+      panel.webview.html = getWebviewContent(srcUrl);
+    };
+    updateWebview();
+    const interval = setInterval(updateWebview, 1000);
+
+    panel.onDidDispose(
+      () => {
+        clearInterval(interval);
+      },
+      null,
+      context.subscriptions
+    );
+    console.log("aaaa");
+  });
+
+  context.subscriptions.push(a);
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+
+function getWebviewContent(srcUri: string) {
+  return `<!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>webview-react</title>
+    <script defer="defer" src="${srcUri}"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  </html>`;
+}

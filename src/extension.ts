@@ -37,9 +37,9 @@ export function activate(context: vscode.ExtensionContext) {
       if (document.languageId === 'json') {
         let jsonText = document.getText();
         try {
-          let jsonData = JSON.parse(jsonText);
-          // 在这里使用 jsonData
-          console.log(jsonData);
+          let parsedJson = JSON.parse(jsonText);
+          //  parsedJson获取到的json数据
+          console.log(parsedJson)
           vscode.window.showInformationMessage(
             'JSON data retrieved successfully!',
           );

@@ -12,6 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
         enableScripts: true, // 运行 JS 执行
       },
     );
+    const vscodeApi =
+      vscode.extensions.getExtension('your.extension.id')?.exports;
+    panel.webview.postMessage({ command: 'injectApi', api: vscodeApi });
 
     const isProduction =
       context.extensionMode === vscode.ExtensionMode.Production;
@@ -26,11 +29,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
     panel.webview.html = getWebviewContent(srcUrl);
 
-    const updateWebview = () => {
-      panel.webview.html = getWebviewContent(srcUrl);
-    };
-    updateWebview();
-
     let editor = vscode.window.activeTextEditor;
     if (editor) {
       let document = editor.document;
@@ -39,7 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
         try {
           let parsedJson = JSON.parse(jsonText);
           //  parsedJson获取到的json数据
-          console.log(parsedJson)
+          const data = '231231';
+          panel.webview.postMessage({ command: 'setData', data });
           vscode.window.showInformationMessage(
             'JSON data retrieved successfully!',
           );
@@ -69,6 +68,21 @@ function getWebviewContent(srcUri: string) {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>webview-react</title>
     <script defer="defer" src="${srcUri}"></script>
+    <script>
+    let vscode;
+    window.addEventListener('message', event => {
+        const message = event.data;
+        if (message.command === 'injectApi') {
+            vscode = message.api;
+            // 在这里可以使用 vscode 对象来访问VS Code的API
+        }
+        if (message.command === 'setData') {
+          const data = message.data;
+          // 在这里可以使用获取到的数据进行处理
+          window.vscode.setState({ savedData: data });
+        }
+    });
+    </script>
     <style>
     html,body {
       margin: 0;

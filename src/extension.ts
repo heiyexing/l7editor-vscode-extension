@@ -47,6 +47,12 @@ function getWebviewContent(srcUri: string) {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>webview-react</title>
     <script defer="defer" src="${srcUri}"></script>
+    <style>
+    html,body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
   </head>
   <body>
     <div id="root"></div>

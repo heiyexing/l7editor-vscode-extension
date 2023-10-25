@@ -30,6 +30,28 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent(srcUrl);
     };
     updateWebview();
+
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+      let document = editor.document;
+      if (document.languageId === 'json') {
+        let jsonText = document.getText();
+        try {
+          let jsonData = JSON.parse(jsonText);
+          // 在这里使用 jsonData
+          console.log(jsonData);
+          vscode.window.showInformationMessage(
+            'JSON data retrieved successfully!',
+          );
+        } catch (error) {
+          vscode.window.showErrorMessage('Error parsing JSON file!');
+        }
+      } else {
+        vscode.window.showErrorMessage('Please select a JSON file!');
+      }
+    } else {
+      vscode.window.showErrorMessage('No JSON file is active!');
+    }
   });
 
   context.subscriptions.push(editor);

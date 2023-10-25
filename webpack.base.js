@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
   entry: path.join(__dirname, './src/view/index.tsx'), // 入口文件
@@ -38,6 +39,9 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, './src/view/index.html'),
       inject: true, // 自动注入静态资源
+    }),
+    new MonacoEditorWebpackPlugin({
+      languages: ['json'],
     }),
   ],
 };

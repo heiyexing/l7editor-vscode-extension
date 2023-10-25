@@ -34,16 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
     const updateWebview = () => {
       panel.webview.html = getWebviewContent(srcUrl);
     };
-    updateWebview();
-    const interval = setInterval(updateWebview, 1000);
-
-    panel.onDidDispose(
-      () => {
-        clearInterval(interval);
-      },
-      null,
-      context.subscriptions
-    );
+    updateWebview()
     console.log("aaaa");
   });
 

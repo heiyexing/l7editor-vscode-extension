@@ -1,3 +1,0 @@
-interface window {
-  vscode: any;
-}

@@ -12,8 +12,6 @@ export function activate(context: vscode.ExtensionContext) {
         enableScripts: true, // 运行 JS 执行
       },
     );
-    const vscodeApi =
-      vscode.extensions.getExtension('your.extension.id')?.exports;
 
     const isProduction =
       context.extensionMode === vscode.ExtensionMode.Production;

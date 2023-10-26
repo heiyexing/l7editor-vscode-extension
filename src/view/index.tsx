@@ -5,8 +5,13 @@ import App from './app';
 const rootElement = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElement);
 
+//@ts-ignore
+const vscode = acquireVsCodeApi();
+//@ts-ignore
+window.vscode = vscode;
+
 root?.render(
   <React.StrictMode>
-    <App />
+    <App   />
   </React.StrictMode>,
 );

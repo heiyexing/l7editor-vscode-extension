@@ -12,6 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
         enableScripts: true, // 运行 JS 执行
       },
     );
+    const vscodeApi =
+      vscode.extensions.getExtension('your.extension.id')?.exports;
 
     const isProduction =
       context.extensionMode === vscode.ExtensionMode.Production;
@@ -24,22 +26,14 @@ export function activate(context: vscode.ExtensionContext) {
     } else {
       srcUrl = 'http://localhost:3000/static/js/main.js';
     }
-    panel.webview.html = getWebviewContent(srcUrl);
-
-    const updateWebview = () => {
-      panel.webview.html = getWebviewContent(srcUrl);
-    };
-    updateWebview();
 
     let editor = vscode.window.activeTextEditor;
     if (editor) {
       let document = editor.document;
       if (document.languageId === 'json') {
         let jsonText = document.getText();
+        panel.webview.html = getWebviewContent(srcUrl, jsonText);
         try {
-          let jsonData = JSON.parse(jsonText);
-          // 在这里使用 jsonData
-          console.log(jsonData);
           vscode.window.showInformationMessage(
             'JSON data retrieved successfully!',
           );
@@ -60,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() {}
 
-function getWebviewContent(srcUri: string) {
+function getWebviewContent(srcUri: string, jsonText: string) {
   return `<!doctype html>
   <html lang="en">
   <head>
@@ -68,7 +62,11 @@ function getWebviewContent(srcUri: string) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>webview-react</title>
+ 
     <script defer="defer" src="${srcUri}"></script>
+    <script>
+    window.fc = ${jsonText}
+    </script>
     <style>
     html,body {
       margin: 0;

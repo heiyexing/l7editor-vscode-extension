@@ -12,6 +12,6 @@ window.vscode = vscode;
 
 root?.render(
   <React.StrictMode>
-    <App />
+    <App   />
   </React.StrictMode>,
 );

@@ -3,16 +3,14 @@ import './index.css';
 import React, { useEffect } from 'react';
 
 function App() {
-  useEffect(() => {
-    //@ts-ignore
-    const state = window.vscode.getState();
-    const savedData = state?.savedData;
-    console.log(savedData, '321234124');
-  }, []);
+  //@ts-ignore
+  const data = window.fc;
 
   return (
     <div className="tool">
-      <L7Editor />
+      <L7Editor
+        features={data.features}
+      />
     </div>
   );
 }

@@ -26,21 +26,14 @@ export function activate(context: vscode.ExtensionContext) {
     } else {
       srcUrl = 'http://localhost:3000/static/js/main.js';
     }
-    panel.webview.html = getWebviewContent(srcUrl);
 
     let editor = vscode.window.activeTextEditor;
     if (editor) {
       let document = editor.document;
       if (document.languageId === 'json') {
         let jsonText = document.getText();
+        panel.webview.html = getWebviewContent(srcUrl, jsonText);
         try {
-          let parsedJson = JSON.parse(jsonText);
-          //  parsedJson获取到的json数据
-          panel.webview.postMessage({
-            command: 'injectApi',
-            api: vscodeApi,
-            parsedJson,
-          });
           vscode.window.showInformationMessage(
             'JSON data retrieved successfully!',
           );
@@ -61,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() {}
 
-function getWebviewContent(srcUri: string) {
+function getWebviewContent(srcUri: string, jsonText: string) {
   return `<!doctype html>
   <html lang="en">
   <head>
@@ -69,21 +62,10 @@ function getWebviewContent(srcUri: string) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>webview-react</title>
+ 
     <script defer="defer" src="${srcUri}"></script>
     <script>
-    let vscode;
-    window.addEventListener('message', event => {
-      console.log(event)
-        const message = event.data;
-        if (message.command === 'injectApi') {
-            vscode = message.api;
-            //这里是获取数据的 
-            const data = message.parsedJson;
-            // 在这里可以使用 vscode 对象来访问VS Code的API
-            API传递数据
-            window.vscode.setState({ savedData: data });
-        }
-    });
+    window.fc = ${jsonText}
     </script>
     <style>
     html,body {
